@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import os
 import uuid
-import tempfile
+from datetime import date
 from pathlib import Path
 
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
@@ -17,7 +17,9 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from transcription import transcribe_bytes
-from instant_presentation.build import build_from_transcript
+from instant_presentation.models import TranscriptDocument, TranscriptSegment
+from instant_presentation.claude_engine import summarize_with_claude
+from instant_presentation.deck_render import render_deck_html
 from storage import save_presentation, load_presentation
 
 app = FastAPI(title="PPT Google", version="0.1.0")
@@ -51,40 +53,43 @@ async def upload(
     # 1. Get transcript text
     if transcript:
         text = transcript.strip()
+        source_name = "pasted-transcript"
     else:
         ext = Path(file.filename).suffix.lower()
         if ext not in AUDIO_EXTENSIONS:
             raise HTTPException(status_code=400, detail=f"Unsupported file type: {ext}")
         audio_bytes = await file.read()
         text = transcribe_bytes(audio_bytes, ext=ext.lstrip("."))
+        source_name = file.filename
 
     if not text:
         raise HTTPException(status_code=422, detail="Empty transcript after processing")
 
-    # 2. Run build pipeline in a temp directory
-    with tempfile.TemporaryDirectory() as tmpdir:
-        tmp = Path(tmpdir)
+    # 2. Build TranscriptDocument with plain-text fallback
+    doc = TranscriptDocument(
+        title="Meeting",
+        source="meet",
+        date=date.today().isoformat(),
+        participants=[],
+        language="auto",
+        origin_file=source_name,
+        project="ppt-google",
+        segments=[TranscriptSegment(timestamp=None, speaker=None, text=text)],
+    )
 
-        # Write transcript to file
-        input_path = tmp / "transcript.txt"
-        input_path.write_text(text, encoding="utf-8")
+    # 3. Summarize via Claude (extract structure + slide plan)
+    summary = summarize_with_claude(
+        transcript=doc,
+        context_notes=[],
+        context_signals=[],
+        presentation_goal=goal or None,
+        audience=audience or None,
+    )
 
-        output_dir = tmp / "output"
-        output_dir.mkdir()
+    # 4. Render beautiful HTML deck
+    html = render_deck_html(summary)
 
-        build_result = build_from_transcript(
-            input_path=input_path,
-            output_dir=output_dir,
-            source_hint="meet",  # treat all uploads as business meeting
-            style="editorial",
-            summary_engine="claude",
-            presentation_goal=goal or None,
-            audience=audience or None,
-        )
-
-        html = build_result["deck"].read_text(encoding="utf-8")
-
-    # 3. Save and return link
+    # 5. Save and return link
     pres_id = str(uuid.uuid4())[:8]
     save_presentation(pres_id, html)
 
