@@ -75,7 +75,7 @@ async def upload(
         build_result = build_from_transcript(
             input_path=input_path,
             output_dir=output_dir,
-            source_hint="auto",
+            source_hint="meet",  # treat all uploads as business meeting
             style="editorial",
             summary_engine="claude",
             presentation_goal=goal or None,

@@ -36,7 +36,8 @@ def normalize_transcript_file(
         project=project,
         fallback_title=input_path.stem.replace("-", " ").strip(),
     )
-    note_content = render_transcript_markdown(document)
+    # Pass raw_text so plain (unstructured) transcripts are preserved verbatim
+    note_content = render_transcript_markdown(document, raw_text=raw_text if not document.segments else None)
 
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path = output_dir / build_output_filename(document)
@@ -154,7 +155,7 @@ def sanitize_filename_part(value: str) -> str:
     return cleaned[:60].rstrip() or "untitled transcript"
 
 
-def render_transcript_markdown(document: TranscriptDocument) -> str:
+def render_transcript_markdown(document: TranscriptDocument, raw_text: str | None = None) -> str:
     """Render the canonical transcript note as markdown with YAML frontmatter."""
     participants = (
         "\n".join(f"  - {participant}" for participant in document.participants)
@@ -214,6 +215,10 @@ def render_transcript_markdown(document: TranscriptDocument) -> str:
             else:
                 lines.append(segment.text)
             lines.append("")
+    elif raw_text:
+        # Plain text input (no structured segments) — include verbatim
+        lines.append(raw_text.strip())
+        lines.append("")
     else:
         lines.append("_No transcript segments parsed._")
         lines.append("")
