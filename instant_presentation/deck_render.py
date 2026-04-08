@@ -369,139 +369,236 @@ You are generating a NEON TERMINAL HTML presentation. Aesthetic: hacker/cyber, m
 </html>
 ```
 
-## Slide Patterns
+## SLIDE TEMPLATES — use ALL of them, mix colors per slide
 
-**Title slide** (first slide, class="slide active"):
+---
+
+### TEMPLATE 1: TITLE SLIDE (always first, class="slide active")
+Rich dashboard layout. Show stats, themes, participants. DENSE — no empty space.
+
 ```html
 <div class="slide active">
   <div class="chrome">
     <span class="chrome-prompt">></span>
     <span class="chrome-path">meeting_recap.md</span>
     <span class="chrome-sep">/</span>
-    <span class="chrome-path" style="color:#555">overview</span>
+    <span class="chrome-path" style="color:#333">overview</span>
     <span class="chrome-status">1 / 7</span>
   </div>
   <div class="chrome-line"></div>
   <div class="slide-inner">
-    <h1>Meeting Title</h1>
-    <p class="sub">One-line key insight from this meeting.</p>
-    <p class="meta">8 апреля 2026</p>
-    <div class="tags">
-      <span class="tag green">tag1</span>
-      <span class="tag pink">tag2</span>
-      <span class="tag cyan">tag3</span>
+    <!-- top: title + subtitle -->
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:32px;margin-bottom:20px">
+      <div style="flex:1">
+        <h1 style="margin-bottom:8px">Meeting Title Here</h1>
+        <p class="sub" style="margin-bottom:0">One sharp sentence — the single most important takeaway from this meeting.</p>
+      </div>
+      <!-- right: big stat -->
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:52px;font-weight:800;color:var(--green);letter-spacing:-2px;line-height:1">7</div>
+        <div style="font-size:10px;color:var(--dim);letter-spacing:2px;text-transform:uppercase">slides</div>
+      </div>
+    </div>
+
+    <!-- middle: 3 stat boxes -->
+    <div class="stats" style="margin-bottom:16px">
+      <div class="stat"><div class="stat-n green">3</div><div class="stat-l">decisions</div></div>
+      <div class="stat"><div class="stat-n pink">4</div><div class="stat-l">action items</div></div>
+      <div class="stat"><div class="stat-n cyan">2</div><div class="stat-l">open questions</div></div>
+      <div class="stat"><div class="stat-n amber">5</div><div class="stat-l">themes</div></div>
+    </div>
+
+    <!-- bottom: tags + meta -->
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div class="tags">
+        <span class="tag green">theme1</span>
+        <span class="tag pink">theme2</span>
+        <span class="tag cyan">theme3</span>
+        <span class="tag amber">theme4</span>
+      </div>
+      <span class="meta">8 апреля 2026 · meet</span>
     </div>
   </div>
   <div class="counter"><span class="cur">1</span> / <span class="tot">1</span></div>
 </div>
 ```
 
-**List slide** (bullets):
+---
+
+### TEMPLATE 2: BIG QUOTE / INSIGHT (use for 1 key insight or decision)
+Full-bleed text. One idea. Huge font. Use green accent.
+
 ```html
 <div class="slide">
   <div class="chrome">
-    <span class="chrome-prompt">></span>
-    <span class="chrome-path">section_name.md</span>
+    <span class="chrome-prompt" style="color:var(--green)">></span>
+    <span class="chrome-path">key_insight.md</span>
     <span class="chrome-status">2 / 7</span>
   </div>
-  <div class="chrome-line"></div>
+  <div class="chrome-line" style="--glow:var(--green)"></div>
   <div class="slide-inner">
-    <h2>Slide Title</h2>
-    <div class="lines">
-      <div class="line"><span class="bullet">■</span><div>Item text here with <strong>key term</strong> highlighted</div></div>
-      <div class="line"><span class="bullet pink">■</span><div>Another point</div></div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--green);margin-bottom:24px">// KEY INSIGHT</div>
+    <div style="font-size:36px;font-weight:700;line-height:1.25;color:var(--text);letter-spacing:-0.5px;max-width:900px;margin-bottom:24px">
+      "The exact insight or decision stated boldly here — make it punchy and direct."
+    </div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <div style="width:32px;height:1px;background:var(--green)"></div>
+      <span style="font-size:12px;color:var(--dim)">Source or context label</span>
     </div>
   </div>
   <div class="counter"><span class="cur">2</span> / <span class="tot">1</span></div>
 </div>
 ```
 
-**Grid slide** (2-3 cards):
+---
+
+### TEMPLATE 3: GRID CARDS (context, themes, options — use pink/cyan accents)
+2 or 3 cards. Each card = one idea. Use pink this time for variety.
+
 ```html
 <div class="slide">
-  <div class="chrome">...</div>
-  <div class="chrome-line"></div>
+  <div class="chrome">
+    <span class="chrome-prompt" style="color:var(--pink)">></span>
+    <span class="chrome-path">context.md</span>
+    <span class="chrome-status">3 / 7</span>
+  </div>
+  <div class="chrome-line" style="background: linear-gradient(90deg, var(--pink), transparent)"></div>
   <div class="slide-inner">
     <h2>Slide Title</h2>
-    <div class="grid2">
-      <div class="block green">
-        <div class="block-label green">Label</div>
-        <div class="block-title">Card Title</div>
-        <div class="block-body">Short description here.</div>
-      </div>
+    <div class="grid3">
       <div class="block pink">
-        <div class="block-label pink">Label</div>
+        <div class="block-label pink">// LABEL 01</div>
         <div class="block-title">Card Title</div>
-        <div class="block-body">Short description.</div>
+        <div class="block-body">2–3 sentence description of this point. Specific and grounded.</div>
+      </div>
+      <div class="block cyan">
+        <div class="block-label cyan">// LABEL 02</div>
+        <div class="block-title">Card Title</div>
+        <div class="block-body">2–3 sentence description of this point.</div>
+      </div>
+      <div class="block amber">
+        <div class="block-label amber">// LABEL 03</div>
+        <div class="block-title">Card Title</div>
+        <div class="block-body">2–3 sentence description.</div>
       </div>
     </div>
   </div>
-  <div class="counter">...</div>
+  <div class="counter"><span class="cur">3</span> / <span class="tot">1</span></div>
 </div>
 ```
 
-**Steps slide** (action items):
+---
+
+### TEMPLATE 4: SPLIT — left list + right highlight (use cyan accent)
+Left = bullet lines. Right = big number + insight block.
+
 ```html
 <div class="slide">
-  <div class="chrome">...</div>
-  <div class="chrome-line"></div>
-  <div class="slide-inner">
-    <h2>Action Items</h2>
-    <div class="steps">
-      <div class="step"><span class="step-n">01</span><div class="step-text">Do this thing</div><span class="step-who">owner</span></div>
-      <div class="step"><span class="step-n">02</span><div class="step-text">Do another thing</div><span class="step-who">owner</span></div>
-    </div>
+  <div class="chrome">
+    <span class="chrome-prompt" style="color:var(--cyan)">></span>
+    <span class="chrome-path">decisions.md</span>
+    <span class="chrome-status">4 / 7</span>
   </div>
-  <div class="counter">...</div>
-</div>
-```
-
-**Stats slide**:
-```html
-<div class="slide">
-  <div class="chrome">...</div>
-  <div class="chrome-line"></div>
+  <div class="chrome-line" style="background:linear-gradient(90deg,var(--cyan),transparent)"></div>
   <div class="slide-inner">
-    <h2>Key Numbers</h2>
-    <div class="stats">
-      <div class="stat"><div class="stat-n green">42</div><div class="stat-l">label here</div></div>
-      <div class="stat"><div class="stat-n pink">7</div><div class="stat-l">label here</div></div>
-      <div class="stat"><div class="stat-n cyan">3</div><div class="stat-l">label here</div></div>
-    </div>
-    <div class="hl">Key insight or quote from the meeting.</div>
-  </div>
-  <div class="counter">...</div>
-</div>
-```
-
-**Split slide**:
-```html
-<div class="slide">
-  <div class="chrome">...</div>
-  <div class="chrome-line"></div>
-  <div class="slide-inner">
-    <h2>Compare</h2>
+    <h2>Slide Title</h2>
     <div class="split">
       <div>
-        <div class="col-head">Left Column</div>
-        <div class="lines">...</div>
+        <div class="col-head" style="color:var(--cyan)">// DECISIONS</div>
+        <div class="lines">
+          <div class="line"><span class="bullet" style="color:var(--cyan)">■</span><div><strong>Decision 1</strong> — brief rationale</div></div>
+          <div class="line"><span class="bullet" style="color:var(--cyan)">■</span><div><strong>Decision 2</strong> — brief rationale</div></div>
+          <div class="line"><span class="bullet" style="color:var(--cyan)">■</span><div><strong>Decision 3</strong> — brief rationale</div></div>
+        </div>
       </div>
       <div>
-        <div class="col-head pink">Right Column</div>
-        <div class="lines">...</div>
+        <div class="col-head pink">// IMPACT</div>
+        <div style="font-size:64px;font-weight:800;color:var(--cyan);letter-spacing:-3px;line-height:1;margin-bottom:12px">3</div>
+        <div style="font-size:12px;color:var(--dim);margin-bottom:16px">confirmed decisions</div>
+        <div class="hl" style="border-left-color:var(--cyan);background:rgba(0,229,255,0.03)">
+          One-line synthesis of what these decisions mean together.
+        </div>
       </div>
     </div>
   </div>
-  <div class="counter">...</div>
+  <div class="counter"><span class="cur">4</span> / <span class="tot">1</span></div>
 </div>
 ```
 
-## Counter: every slide needs `.counter` with `.cur` and `.tot` spans.
-## Chrome: every slide has `.chrome` + `.chrome-line` at the top.
-## Chrome path = short slug of the section (decisions.md, action_items.md, etc.)
-## Mix components — don't use .lines for every slide.
-## 5–8 slides. First = title. Last = action items (steps).
-## Return ONLY complete HTML. No markdown fences. No commentary.
+---
+
+### TEMPLATE 5: FULL-WIDTH BULLETS (blockers, risks, open questions — use amber)
+Dense list. Left-aligned label. Use amber for warning/risk feel.
+
+```html
+<div class="slide">
+  <div class="chrome">
+    <span class="chrome-prompt" style="color:var(--amber)">></span>
+    <span class="chrome-path">blockers.md</span>
+    <span class="chrome-status">5 / 7</span>
+  </div>
+  <div class="chrome-line" style="background:linear-gradient(90deg,var(--amber),transparent)"></div>
+  <div class="slide-inner">
+    <div style="display:flex;align-items:baseline;gap:16px;margin-bottom:20px">
+      <h2 style="margin:0">Blockers & Risks</h2>
+      <span style="font-size:11px;color:var(--amber);font-weight:700;letter-spacing:2px">// WARNING</span>
+    </div>
+    <div class="lines">
+      <div class="line" style="border-left:2px solid var(--amber)"><span class="bullet" style="color:var(--amber)">▲</span><div><strong>Risk title</strong> — what could go wrong and why it matters</div></div>
+      <div class="line" style="border-left:2px solid var(--amber)"><span class="bullet" style="color:var(--amber)">▲</span><div><strong>Risk title</strong> — explanation</div></div>
+      <div class="line" style="border-left:1px solid var(--border-lit)"><span class="bullet" style="color:var(--dim)">◇</span><div>Open question — not yet resolved</div></div>
+      <div class="line" style="border-left:1px solid var(--border-lit)"><span class="bullet" style="color:var(--dim)">◇</span><div>Open question — needs follow-up</div></div>
+    </div>
+  </div>
+  <div class="counter"><span class="cur">5</span> / <span class="tot">1</span></div>
+</div>
+```
+
+---
+
+### TEMPLATE 6: STEPS — ACTION ITEMS (always last slide, green accent)
+Numbered steps. Owner on the right. Clean and clear.
+
+```html
+<div class="slide">
+  <div class="chrome">
+    <span class="chrome-prompt" style="color:var(--green)">></span>
+    <span class="chrome-path">action_items.md</span>
+    <span class="chrome-status">6 / 7</span>
+  </div>
+  <div class="chrome-line"></div>
+  <div class="slide-inner">
+    <div style="display:flex;align-items:baseline;gap:16px;margin-bottom:20px">
+      <h2 style="margin:0">Next Steps</h2>
+      <span style="font-size:11px;color:var(--green);font-weight:700;letter-spacing:2px">// ACTION REQUIRED</span>
+    </div>
+    <div class="steps">
+      <div class="step"><span class="step-n">01</span><div class="step-text">Action description — specific and clear</div><span class="step-who">owner</span></div>
+      <div class="step"><span class="step-n">02</span><div class="step-text">Another action item</div><span class="step-who">owner</span></div>
+      <div class="step"><span class="step-n">03</span><div class="step-text">Third action</div><span class="step-who">owner</span></div>
+    </div>
+    <!-- deadline or next meeting -->
+    <div style="margin-top:16px;padding:12px 16px;border:1px solid var(--border-lit);border-radius:3px;display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:12px;color:var(--dim)">// NEXT CHECKPOINT</span>
+      <span style="font-size:13px;color:var(--green);font-weight:600">date or deadline here</span>
+    </div>
+  </div>
+  <div class="counter"><span class="cur">6</span> / <span class="tot">1</span></div>
+</div>
+```
+
+---
+
+## RULES
+- ALWAYS use Template 1 for the first slide — it MUST have stats, tags, meta
+- Use a DIFFERENT template and a DIFFERENT accent color for every slide
+- Rotate colors: green → pink → cyan → amber → pink → green (never same color twice in a row)
+- Template 2 (big quote) is great for 1 key decision or insight
+- Template 6 (steps) is always the LAST slide
+- 6–8 slides total
+- Every slide: `.counter` with `.cur`/`.tot`, `.chrome` + `.chrome-line`
+- Chrome path = snake_case slug of the section topic
+- Return ONLY complete HTML. No markdown fences. No commentary.
 """
 
 
