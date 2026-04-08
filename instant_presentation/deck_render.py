@@ -602,8 +602,8 @@ Numbered steps. Owner on the right. Clean and clear.
 """
 
 
-def render_deck_html(summary: SummaryDocument) -> str:
-    """Call Claude to render a Neon Terminal HTML slide deck from the summary."""
+def render_deck_html(summary: SummaryDocument, style: str = "neon") -> str:
+    """Call Claude to render an HTML slide deck from the summary."""
     import anthropic
 
     api_key = os.environ.get("ANTHROPIC_API_KEY")

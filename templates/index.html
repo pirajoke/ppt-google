@@ -4,220 +4,432 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PPT Google — Meeting → Presentation</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #0a0a0a;
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: #050505;
       color: #e0e0e0;
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
+      padding: 48px 24px 80px;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      text-align: center;
+      margin-bottom: 56px;
     }
     .logo {
-      font-size: 13px;
-      color: #555;
-      letter-spacing: 2px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #333;
+      letter-spacing: 3px;
       text-transform: uppercase;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
     }
     h1 {
-      font-size: 36px;
+      font-size: 44px;
       font-weight: 700;
       color: #fff;
-      margin-bottom: 8px;
-      text-align: center;
+      letter-spacing: -1.5px;
+      margin-bottom: 10px;
     }
-    .sub {
-      color: #666;
-      font-size: 16px;
-      margin-bottom: 40px;
-      text-align: center;
+    .sub { font-size: 16px; color: #555; }
+
+    /* ── LAYOUT ── */
+    .layout {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 32px;
+      align-items: start;
     }
-    .card {
-      background: #141414;
-      border: 1px solid #222;
-      border-radius: 12px;
-      padding: 32px;
+
+    /* ── TEMPLATE PICKER ── */
+    .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #333;
+      margin-bottom: 14px;
+    }
+    .templates {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+    .tpl {
+      background: #0d0d0d;
+      border: 1px solid #1a1a1a;
+      border-radius: 8px;
+      padding: 0;
+      cursor: pointer;
+      transition: border-color 0.15s, transform 0.1s;
+      overflow: hidden;
+      position: relative;
+    }
+    .tpl:hover { border-color: #333; transform: translateY(-1px); }
+    .tpl.selected { border-color: #00ff9d; }
+    .tpl.selected .tpl-check { opacity: 1; }
+
+    .tpl-check {
+      position: absolute;
+      top: 8px; right: 8px;
+      width: 18px; height: 18px;
+      background: #00ff9d;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; color: #000; font-weight: 900;
+      opacity: 0;
+      transition: opacity 0.15s;
+      z-index: 2;
+    }
+
+    /* mini slide preview */
+    .tpl-preview {
       width: 100%;
-      max-width: 560px;
+      aspect-ratio: 16/9;
+      border-radius: 6px 6px 0 0;
+      position: relative;
+      overflow: hidden;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 6px;
+    }
+    .tpl-meta {
+      padding: 10px 12px;
+      border-top: 1px solid #1a1a1a;
+    }
+    .tpl-name { font-size: 12px; font-weight: 600; color: #e0e0e0; margin-bottom: 2px; }
+    .tpl-desc { font-size: 11px; color: #444; }
+
+    /* ── NEON TERMINAL preview ── */
+    .prev-neon { background: #050505; padding: 10px 12px; }
+    .prev-neon .p-chrome { color: #00ff9d; font-size: 6px; margin-bottom: 6px; }
+    .prev-neon .p-line { width: 100%; height: 0.5px; background: linear-gradient(90deg, #00ff9d, transparent); margin-bottom: 8px; }
+    .prev-neon .p-h1 { font-size: 12px; font-weight: 800; color: #e0e0e0; letter-spacing: -0.3px; margin-bottom: 4px; }
+    .prev-neon .p-sub { font-size: 5px; color: #555; margin-bottom: 8px; line-height: 1.4; }
+    .prev-neon .p-stats { display: flex; gap: 3px; margin-bottom: 6px; }
+    .prev-neon .p-stat { background: #0d0d0d; border: 0.5px solid #1a1a1a; border-radius: 2px; padding: 4px 6px; flex: 1; text-align: center; }
+    .prev-neon .p-num { font-size: 9px; font-weight: 800; line-height: 1; margin-bottom: 1px; }
+    .prev-neon .p-lbl { font-size: 4px; color: #444; }
+    .prev-neon .p-tags { display: flex; gap: 3px; }
+    .prev-neon .p-tag { font-size: 4px; font-weight: 700; padding: 2px 4px; border-radius: 1px; letter-spacing: 0.5px; }
+
+    /* ── DARK MINIMAL preview ── */
+    .prev-dark { background: #09090b; padding: 10px 12px; }
+    .prev-dark .p-label { font-size: 4px; font-weight: 700; letter-spacing: 2px; color: #6366f1; margin-bottom: 4px; }
+    .prev-dark .p-h1 { font-size: 11px; font-weight: 800; color: #fff; letter-spacing: -0.3px; margin-bottom: 3px; }
+    .prev-dark .p-div { width: 20px; height: 1.5px; background: #6366f1; border-radius: 1px; margin-bottom: 6px; }
+    .prev-dark .p-sub { font-size: 5px; color: #555; margin-bottom: 8px; line-height: 1.4; }
+    .prev-dark .p-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3px; }
+    .prev-dark .p-card { background: #111; border: 0.5px solid #27272a; border-radius: 2px; padding: 5px; }
+    .prev-dark .p-clabel { font-size: 3.5px; font-weight: 700; letter-spacing: 1px; margin-bottom: 2px; }
+    .prev-dark .p-ctitle { font-size: 5px; color: #e0e0e0; font-weight: 600; }
+
+    /* ── GRADIENT preview ── */
+    .prev-gradient { background: linear-gradient(135deg, #0d0d1a 0%, #1a0d2e 50%, #0d1a1a 100%); padding: 10px 12px; }
+    .prev-gradient .p-h1 { font-size: 11px; font-weight: 800; color: #fff; letter-spacing: -0.3px; margin-bottom: 4px; }
+    .prev-gradient .p-sub { font-size: 5px; color: rgba(255,255,255,0.4); margin-bottom: 10px; line-height: 1.4; }
+    .prev-gradient .p-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+    .prev-gradient .p-card { background: rgba(255,255,255,0.05); border: 0.5px solid rgba(255,255,255,0.1); border-radius: 3px; padding: 6px; backdrop-filter: blur(4px); }
+    .prev-gradient .p-clabel { font-size: 3.5px; font-weight: 700; letter-spacing: 1px; margin-bottom: 2px; color: #7c3aed; }
+    .prev-gradient .p-ctitle { font-size: 5px; color: #e0e0e0; font-weight: 600; margin-bottom: 2px; }
+    .prev-gradient .p-cbody { font-size: 4px; color: rgba(255,255,255,0.3); line-height: 1.4; }
+
+    /* ── EDITORIAL preview ── */
+    .prev-editorial { background: #faf9f6; padding: 10px 12px; font-family: 'Georgia', serif; }
+    .prev-editorial .p-label { font-size: 4px; font-weight: 700; letter-spacing: 2px; color: #aaa; font-family: 'Inter', sans-serif; margin-bottom: 4px; }
+    .prev-editorial .p-h1 { font-size: 12px; font-weight: 800; color: #1a1a1a; letter-spacing: -0.3px; margin-bottom: 3px; }
+    .prev-editorial .p-rule { width: 100%; height: 0.5px; background: #e0ddd8; margin-bottom: 6px; }
+    .prev-editorial .p-sub { font-size: 5px; color: #888; margin-bottom: 8px; line-height: 1.5; font-family: 'Inter', sans-serif; }
+    .prev-editorial .p-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+    .prev-editorial .p-card { background: #fff; border: 0.5px solid #e0ddd8; border-radius: 2px; padding: 5px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+    .prev-editorial .p-ctitle { font-size: 5px; color: #1a1a1a; font-weight: 600; margin-bottom: 2px; font-family: 'Inter', sans-serif; }
+    .prev-editorial .p-cbody { font-size: 4px; color: #888; line-height: 1.4; font-family: 'Inter', sans-serif; }
+
+    /* ── FORM ── */
+    .form-card {
+      background: #0d0d0d;
+      border: 1px solid #1a1a1a;
+      border-radius: 12px;
+      padding: 28px;
+      position: sticky;
+      top: 24px;
     }
     .tabs {
       display: flex;
       gap: 4px;
-      background: #0a0a0a;
+      background: #050505;
       border-radius: 8px;
       padding: 4px;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
     .tab {
       flex: 1;
       padding: 8px;
       border: none;
       background: transparent;
-      color: #555;
+      color: #444;
       border-radius: 6px;
       cursor: pointer;
-      font-size: 14px;
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
       transition: all 0.15s;
     }
-    .tab.active {
-      background: #1e1e1e;
-      color: #e0e0e0;
-    }
+    .tab.active { background: #1a1a1a; color: #e0e0e0; }
     .panel { display: none; }
     .panel.active { display: block; }
 
     .drop-zone {
-      border: 2px dashed #333;
+      border: 1px dashed #222;
       border-radius: 8px;
-      padding: 40px 20px;
+      padding: 32px 16px;
       text-align: center;
       cursor: pointer;
       transition: border-color 0.2s;
       position: relative;
+      margin-bottom: 16px;
     }
-    .drop-zone:hover, .drop-zone.dragover {
-      border-color: #4f8ef7;
-    }
-    .drop-zone input[type="file"] {
-      position: absolute;
-      inset: 0;
-      opacity: 0;
-      cursor: pointer;
-    }
-    .drop-icon { font-size: 32px; margin-bottom: 8px; }
-    .drop-label { color: #666; font-size: 14px; }
-    .drop-hint { color: #444; font-size: 12px; margin-top: 4px; }
-    .file-name { color: #4f8ef7; font-size: 14px; margin-top: 8px; }
+    .drop-zone:hover, .drop-zone.dragover { border-color: #00ff9d; }
+    .drop-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .drop-icon { font-size: 28px; margin-bottom: 6px; }
+    .drop-label { color: #444; font-size: 13px; }
+    .drop-hint { color: #2a2a2a; font-size: 11px; margin-top: 3px; }
+    .file-name { color: #00ff9d; font-size: 12px; margin-top: 6px; font-family: 'JetBrains Mono', monospace; }
 
     textarea {
       width: 100%;
-      background: #0a0a0a;
-      border: 1px solid #222;
+      background: #050505;
+      border: 1px solid #1a1a1a;
       border-radius: 8px;
       color: #e0e0e0;
-      font-size: 14px;
+      font-size: 13px;
       padding: 12px;
       resize: vertical;
-      min-height: 160px;
-      font-family: inherit;
+      min-height: 120px;
+      font-family: 'Inter', sans-serif;
+      margin-bottom: 16px;
     }
-    textarea:focus { outline: none; border-color: #333; }
+    textarea:focus { outline: none; border-color: #222; }
+    textarea::placeholder { color: #333; }
 
-    .options {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 20px;
-    }
-    .field label {
-      display: block;
-      font-size: 12px;
-      color: #555;
-      margin-bottom: 6px;
-    }
+    .options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+    .field label { display: block; font-size: 11px; color: #333; margin-bottom: 6px; font-family: 'JetBrains Mono', monospace; letter-spacing: 1px; }
     .field input {
       width: 100%;
-      background: #0a0a0a;
-      border: 1px solid #222;
+      background: #050505;
+      border: 1px solid #1a1a1a;
       border-radius: 6px;
       color: #e0e0e0;
-      font-size: 14px;
+      font-size: 13px;
       padding: 8px 10px;
+      font-family: 'Inter', sans-serif;
     }
-    .field input:focus { outline: none; border-color: #333; }
+    .field input:focus { outline: none; border-color: #222; }
+    .field input::placeholder { color: #333; }
 
     .btn {
       width: 100%;
-      margin-top: 24px;
-      padding: 14px;
-      background: #4f8ef7;
+      padding: 13px;
+      background: #00ff9d;
       border: none;
       border-radius: 8px;
-      color: #fff;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .btn:hover { background: #3a7ae0; }
-    .btn:disabled { background: #222; color: #555; cursor: not-allowed; }
-
-    .status {
-      margin-top: 20px;
-      text-align: center;
+      color: #000;
       font-size: 14px;
-      color: #666;
-      min-height: 20px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.5px;
+      transition: opacity 0.2s, transform 0.1s;
     }
-    .status.error { color: #e05a5a; }
-    .status a { color: #4f8ef7; text-decoration: none; }
+    .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn:disabled { background: #1a1a1a; color: #333; cursor: not-allowed; transform: none; }
+
+    .status { margin-top: 14px; text-align: center; font-size: 13px; color: #444; min-height: 18px; font-family: 'JetBrains Mono', monospace; }
+    .status.error { color: #ff0066; }
+    .status a { color: #00ff9d; text-decoration: none; }
     .status a:hover { text-decoration: underline; }
 
-    .spinner {
-      display: inline-block;
-      width: 14px; height: 14px;
-      border: 2px solid #333;
-      border-top-color: #4f8ef7;
-      border-radius: 50%;
-      animation: spin 0.6s linear infinite;
-      margin-right: 6px;
-      vertical-align: middle;
-    }
+    .spinner { display: inline-block; width: 12px; height: 12px; border: 1.5px solid #1a1a1a; border-top-color: #00ff9d; border-radius: 50%; animation: spin 0.5s linear infinite; margin-right: 6px; vertical-align: middle; }
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .form-card { position: static; }
+      h1 { font-size: 28px; }
+    }
   </style>
 </head>
 <body>
-  <div class="logo">PPT Google</div>
-  <h1>Meeting → Presentation</h1>
-  <p class="sub">Upload a recording or paste a transcript — get a shareable deck.</p>
+  <div class="header">
+    <div class="logo">> ppt-google</div>
+    <h1>Meeting → Presentation</h1>
+    <p class="sub">Paste a transcript or drop a recording — get a shareable deck in 60s.</p>
+  </div>
 
-  <div class="card">
-    <div class="tabs">
-      <button class="tab active" onclick="switchTab('audio')">Audio / Video</button>
-      <button class="tab" onclick="switchTab('text')">Transcript</button>
+  <div class="layout">
+    <!-- LEFT: template picker -->
+    <div>
+      <div class="section-label">// choose style</div>
+      <div class="templates">
+
+        <!-- NEON TERMINAL -->
+        <div class="tpl selected" data-style="neon" onclick="selectStyle(this)">
+          <div class="tpl-check">✓</div>
+          <div class="tpl-preview prev-neon">
+            <div class="p-chrome">> meeting_recap.md</div>
+            <div class="p-line"></div>
+            <div class="p-h1">Meeting Title</div>
+            <div class="p-sub">Key insight from this session — one sharp sentence here.</div>
+            <div class="p-stats">
+              <div class="p-stat"><div class="p-num" style="color:#00ff9d">3</div><div class="p-lbl">decisions</div></div>
+              <div class="p-stat"><div class="p-num" style="color:#ff0066">4</div><div class="p-lbl">actions</div></div>
+              <div class="p-stat"><div class="p-num" style="color:#00e5ff">2</div><div class="p-lbl">questions</div></div>
+            </div>
+            <div class="p-tags">
+              <span class="p-tag" style="border:0.5px solid #00ff9d;color:#00ff9d;background:rgba(0,255,157,0.06)">MVP</span>
+              <span class="p-tag" style="border:0.5px solid #ff0066;color:#ff0066;background:rgba(255,0,102,0.06)">LAUNCH</span>
+              <span class="p-tag" style="border:0.5px solid #00e5ff;color:#00e5ff;background:rgba(0,229,255,0.06)">TECH</span>
+            </div>
+          </div>
+          <div class="tpl-meta">
+            <div class="tpl-name">Neon Terminal</div>
+            <div class="tpl-desc">Dark, monospace, cyber</div>
+          </div>
+        </div>
+
+        <!-- DARK MINIMAL -->
+        <div class="tpl" data-style="dark" onclick="selectStyle(this)">
+          <div class="tpl-check">✓</div>
+          <div class="tpl-preview prev-dark" style="font-family:'Inter',sans-serif">
+            <div class="p-label">PRODUCT DISCUSSION</div>
+            <div class="p-h1" style="font-family:'Inter',sans-serif">Meeting Title</div>
+            <div class="p-div"></div>
+            <div class="p-sub">Key insight from this session — one sharp sentence here describing the outcome.</div>
+            <div class="p-cards">
+              <div class="p-card"><div class="p-clabel" style="color:#6366f1">CONTEXT</div><div class="p-ctitle">Card title one</div></div>
+              <div class="p-card"><div class="p-clabel" style="color:#22d3ee">DECISION</div><div class="p-ctitle">Card title two</div></div>
+              <div class="p-card"><div class="p-clabel" style="color:#f59e0b">NEXT</div><div class="p-ctitle">Card title three</div></div>
+            </div>
+          </div>
+          <div class="tpl-meta">
+            <div class="tpl-name">Dark Minimal</div>
+            <div class="tpl-desc">Clean, indigo accent, Inter</div>
+          </div>
+        </div>
+
+        <!-- GRADIENT -->
+        <div class="tpl" data-style="gradient" onclick="selectStyle(this)">
+          <div class="tpl-check">✓</div>
+          <div class="tpl-preview prev-gradient">
+            <div class="p-h1">Meeting Title</div>
+            <div class="p-sub">Key insight from this session — describing the outcome clearly and directly.</div>
+            <div class="p-cards">
+              <div class="p-card"><div class="p-clabel" style="color:#7c3aed">CONTEXT</div><div class="p-ctitle">Card one here</div><div class="p-cbody">Short description text</div></div>
+              <div class="p-card"><div class="p-clabel" style="color:#06b6d4">DECISIONS</div><div class="p-ctitle">Card two here</div><div class="p-cbody">Short description text</div></div>
+            </div>
+          </div>
+          <div class="tpl-meta">
+            <div class="tpl-name">Gradient Mesh</div>
+            <div class="tpl-desc">Purple/teal mesh, glass cards</div>
+          </div>
+        </div>
+
+        <!-- EDITORIAL -->
+        <div class="tpl" data-style="editorial" onclick="selectStyle(this)">
+          <div class="tpl-check">✓</div>
+          <div class="tpl-preview prev-editorial">
+            <div class="p-label">MEETING RECAP</div>
+            <div class="p-h1">Meeting Title</div>
+            <div class="p-rule"></div>
+            <div class="p-sub">Key insight from this session — one sharp sentence here describing the meeting outcome.</div>
+            <div class="p-cards">
+              <div class="p-card"><div class="p-ctitle">Key decision one</div><div class="p-cbody">Brief supporting context here</div></div>
+              <div class="p-card"><div class="p-ctitle">Key decision two</div><div class="p-cbody">Brief supporting context here</div></div>
+            </div>
+          </div>
+          <div class="tpl-meta">
+            <div class="tpl-name">Editorial Light</div>
+            <div class="tpl-desc">Clean, serif, magazine-style</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- example output hint -->
+      <div style="border:1px solid #111;border-radius:8px;padding:16px 20px">
+        <div class="section-label" style="margin-bottom:8px">// what you get</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#444">
+            <span style="color:#00ff9d;font-family:'JetBrains Mono',monospace;font-size:10px">01</span> 6–8 slides with keyboard navigation
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#444">
+            <span style="color:#00ff9d;font-family:'JetBrains Mono',monospace;font-size:10px">02</span> Decisions, action items, key themes extracted
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#444">
+            <span style="color:#00ff9d;font-family:'JetBrains Mono',monospace;font-size:10px">03</span> Shareable link — no sign-up for viewer
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#444">
+            <span style="color:#00ff9d;font-family:'JetBrains Mono',monospace;font-size:10px">04</span> Single HTML file, works offline
+          </div>
+        </div>
+      </div>
     </div>
 
-    <form id="uploadForm">
-      <!-- Audio panel -->
-      <div class="panel active" id="panel-audio">
-        <div class="drop-zone" id="dropZone">
-          <input type="file" id="audioFile" accept=".mp3,.mp4,.m4a,.wav,.ogg,.webm,.flac" />
-          <div class="drop-icon">🎙</div>
-          <div class="drop-label">Drop audio or video file here</div>
-          <div class="drop-hint">MP3, MP4, M4A, WAV, OGG, WebM · up to 25 MB</div>
-          <div class="file-name" id="fileName"></div>
-        </div>
+    <!-- RIGHT: form -->
+    <div class="form-card">
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('audio')">Audio / Video</button>
+        <button class="tab" onclick="switchTab('text')">Transcript</button>
       </div>
 
-      <!-- Text panel -->
-      <div class="panel" id="panel-text">
-        <textarea id="transcriptText" placeholder="Paste your meeting transcript here..."></textarea>
-      </div>
-
-      <div class="options">
-        <div class="field">
-          <label>Audience (optional)</label>
-          <input type="text" id="audience" placeholder="e.g. investors, team" />
+      <form id="uploadForm">
+        <div class="panel active" id="panel-audio">
+          <div class="drop-zone" id="dropZone">
+            <input type="file" id="audioFile" accept=".mp3,.mp4,.m4a,.wav,.ogg,.webm,.flac" />
+            <div class="drop-icon">🎙</div>
+            <div class="drop-label">Drop audio or video file here</div>
+            <div class="drop-hint">MP3, MP4, M4A, WAV, OGG, WebM · up to 25 MB</div>
+            <div class="file-name" id="fileName"></div>
+          </div>
         </div>
-        <div class="field">
-          <label>Goal (optional)</label>
-          <input type="text" id="goal" placeholder="e.g. get buy-in" />
+
+        <div class="panel" id="panel-text">
+          <textarea id="transcriptText" placeholder="Paste your meeting transcript here..."></textarea>
         </div>
-      </div>
 
-      <button type="submit" class="btn" id="submitBtn">Generate Presentation</button>
-    </form>
+        <div class="options">
+          <div class="field">
+            <label>// audience</label>
+            <input type="text" id="audience" placeholder="investors, team..." />
+          </div>
+          <div class="field">
+            <label>// goal</label>
+            <input type="text" id="goal" placeholder="get buy-in..." />
+          </div>
+        </div>
 
-    <div class="status" id="status"></div>
+        <button type="submit" class="btn" id="submitBtn">Generate Presentation</button>
+      </form>
+
+      <div class="status" id="status"></div>
+    </div>
   </div>
 
   <script>
     let activeTab = 'audio';
+    let selectedStyle = 'neon';
+
+    function selectStyle(el) {
+      document.querySelectorAll('.tpl').forEach(t => t.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedStyle = el.dataset.style;
+    }
 
     function switchTab(tab) {
       activeTab = tab;
@@ -254,26 +466,27 @@
       const formData = new FormData();
       formData.append('audience', document.getElementById('audience').value);
       formData.append('goal', document.getElementById('goal').value);
+      formData.append('style', selectedStyle);
 
       if (activeTab === 'audio') {
         const file = document.getElementById('audioFile').files[0];
-        if (!file) { status.textContent = 'Please select an audio file.'; status.className = 'status error'; return; }
+        if (!file) { status.textContent = 'select an audio file first'; status.className = 'status error'; return; }
         formData.append('file', file);
       } else {
         const text = document.getElementById('transcriptText').value.trim();
-        if (!text) { status.textContent = 'Please paste a transcript.'; status.className = 'status error'; return; }
+        if (!text) { status.textContent = 'paste a transcript first'; status.className = 'status error'; return; }
         formData.append('transcript', text);
       }
 
       btn.disabled = true;
       status.className = 'status';
-      status.innerHTML = '<span class="spinner"></span>Processing… this takes 30-60 seconds';
+      status.innerHTML = '<span class="spinner"></span>processing... 30-60s';
 
       try {
         const res = await fetch('/upload', { method: 'POST', body: formData });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.detail || 'Server error');
-        status.innerHTML = `Done! <a href="${data.url}" target="_blank">Open presentation →</a>`;
+        if (!res.ok) throw new Error(data.detail || 'server error');
+        status.innerHTML = `done → <a href="${data.url}" target="_blank">open presentation ↗</a>`;
       } catch (err) {
         status.textContent = err.message;
         status.className = 'status error';

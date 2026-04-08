@@ -45,6 +45,7 @@ async def upload(
     transcript: str | None = Form(default=None),
     audience: str | None = Form(default=None),
     goal: str | None = Form(default=None),
+    style: str = Form(default="neon"),
 ):
     """Accept audio file OR raw transcript text, return presentation URL."""
     if not file and not transcript:
@@ -87,7 +88,7 @@ async def upload(
     )
 
     # 4. Render beautiful HTML deck
-    html = render_deck_html(summary)
+    html = render_deck_html(summary, style=style)
 
     # 5. Save and return link
     pres_id = str(uuid.uuid4())[:8]
