@@ -256,6 +256,12 @@ def parse_normalized_note(note_text: str, origin_file: str, project: str) -> Tra
     key_points = parse_markdown_bullets_section(body, "Key Points")
     next_actions = parse_markdown_bullets_section(body, "Next actions")
 
+    # Fallback: if no structured segments, extract plain text from ## Transcript section
+    if not segments:
+        transcript_section = _extract_section_body(body, "Transcript")
+        if transcript_section.strip():
+            segments = [TranscriptSegment(timestamp=None, speaker=None, text=transcript_section.strip())]
+
     participants = metadata.get("participants_list", [])
     if not participants:
         participants = sorted({segment.speaker for segment in segments if segment.speaker})
@@ -373,6 +379,24 @@ def parse_rendered_segments(body: str) -> list[TranscriptSegment]:
         )
         index += 1
     return segments
+
+
+def _extract_section_body(body: str, heading: str) -> str:
+    """Return all text lines under a given ## heading until the next ## heading."""
+    lines = body.splitlines()
+    target = f"## {heading}"
+    in_section = False
+    collected: list[str] = []
+    for line in lines:
+        if line.strip().startswith("## "):
+            if in_section:
+                break
+            if line.strip() == target:
+                in_section = True
+            continue
+        if in_section and line.strip() and not line.strip().startswith("_No transcript"):
+            collected.append(line.strip())
+    return "\n".join(collected)
 
 
 def parse_markdown_bullets_section(body: str, heading: str) -> list[str]:
